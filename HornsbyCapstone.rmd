@@ -126,7 +126,7 @@ Rmses <- sapply(lambdas,function(l){
 })
 
 lambda <-Lambdas[which.min(Rmses)]
-paste('The best Lambda of',min(Rmses),'is with Lambda',Lambda)
+paste('The best Lambda of',min(Rmses),'is with Lambda',lambda)
 
 #Run the same program with best lambda
 lambda <- 0.5
