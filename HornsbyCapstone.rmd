@@ -1,3 +1,10 @@
+
+#INTRODUCTION/SUMMARY
+#This project is to complete the Movielens capstone assignment for EDX Datascience Program.
+#I tried to run a variety of algorithms but none would work with my computer. I opted for a very
+#simple approach that I found online: Penalized Least Squares Regression. I applied this to a number of variables, but got the best RMSE with rating/userId. This method assumes that fewer ratings per user produces more volatility. 
+#I ran the PLSR on a number of variables but the userId, ratings match returned the lowest 
+
 #Download edx dataset
 
 dl <- tempfile()
@@ -101,10 +108,10 @@ Lambdas <- seq(0, 5, 0.25)
 
 Rmses <- sapply(lambdas,function(l){
   
-#Determine the mean of ratings from the edx training set
+  #Determine the mean of ratings from the edx training set
   mu <- mean(edx$rating)
   
-#Adjust with low ratings
+  #Adjust with low ratings
   b_i <- edx %>% 
     group_by(movieId) %>%
     summarize(b_i = sum(rating - mu)/(n()+l))
@@ -112,9 +119,9 @@ Rmses <- sapply(lambdas,function(l){
     left_join(b_i, by="movieId") %>%
     group_by(userId) %>%
     summarize(b_u = sum(rating - b_i - mu)/(n()+l))
-   
   
-#Use the training set to find the best predicted lambda 
+  
+  #Use the training set to find the best predicted lambda 
   predictedRating<- 
     edx %>% 
     left_join(b_i, by = "movieId") %>%
@@ -128,26 +135,28 @@ Rmses <- sapply(lambdas,function(l){
 lambda <-Lambdas[which.min(Rmses)]
 paste('The best Lambda of',min(Rmses),'is with Lambda',lambda)
 
+#RESULTS
+
 #Run the same program with best lambda
 lambda <- 0.5
 
 predict_a<- sapply(lambda,function(l){
   
-#Find the mean from the training set
+  #Find the mean from the training set
   mu <- mean(edx$rating)
   
-#Find movie effect with best lambda
+  #Find movie effect with best lambda
   b_i <- edx %>% 
     group_by(movieId) %>%
     summarize(b_i = sum(rating - mu)/(n()+l))
   
-#Find user effect with best lambda
+  #Find user effect with best lambda
   b_u <- edx %>% 
     left_join(b_i, by="movieId") %>%
     group_by(userId) %>%
     summarize(b_u = sum(rating - b_i - mu)/(n()+l))
   
-#Predict the ratings on the validation set
+  #Predict the ratings on the validation set
   predictedRating<- 
     validation %>% 
     left_join(b_i, by = "movieId") %>%
@@ -158,4 +167,7 @@ predict_a<- sapply(lambda,function(l){
   return(predictedRating)
   
 })
+#CONCLUSION:
+#The Penalized Least Squares Regression does indeed produce an acceptable RMSE. Overall, however, this is a lame machine learning exercise. It isn’t efficient to run various algorithms, and the assignment doesn’t ask to compare accuracy (which really is the point of machine learning, isn’t it?). 
+
 
